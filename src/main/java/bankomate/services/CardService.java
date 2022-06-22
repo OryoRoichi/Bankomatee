@@ -12,5 +12,4 @@ public interface CardService {
     String pinChange(int oldPin, int newPin) throws WrongPinException;
 
     String addCash(int amount);
-    void addFromCardToCard(Card card, int amount) throws NoEnoughMoneyException ;
 }

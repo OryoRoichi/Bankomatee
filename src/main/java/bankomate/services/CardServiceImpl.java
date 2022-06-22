@@ -36,11 +36,4 @@ public class CardServiceImpl implements CardService {
         this.card.setCashAmount(this.card.getCashAmount() + amount);
         return "Средства успешно зачислены на Ваш счет";
     }
-    public void addFromCardToCard(Card otherCard, int amount) throws NoEnoughMoneyException {
-        if (this.card.getCashAmount() < amount) {
-            throw new NoEnoughMoneyException();
-        }
-        this.card.setCashAmount(this.card.getCashAmount() - amount);
-        otherCard.setCashAmount(otherCard.getCashAmount() + amount);
-    }
 }

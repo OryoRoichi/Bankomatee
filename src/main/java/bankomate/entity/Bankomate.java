@@ -12,11 +12,13 @@ public class Bankomate {
     private CardService cardService;
     private IOService ioService;
 
+
     public Bankomate(Card card) {
         this.card = card;
         this.authorizationService = new AuthorizationServiceImpl();
         this.cardService = new CardServiceImpl(this.authorizationService, this.card);
         this.ioService = new IOServiceImpl();
+
     }
 
     public void run() {
@@ -32,6 +34,7 @@ public class Bankomate {
         ioService.write("Наберите 2 для снятия наличных");
         ioService.write("Наберите 3 для пополнения счета");
         ioService.write("Наберите 4 для смены ПИН-кода");
+        ioService.write("Наберите 5 для перевода денег с карты на карту");
         ioService.write("Введите 'exit' для выхода");
         Integer operation = readOperation();
         switch (operation) {
@@ -50,12 +53,17 @@ public class Bankomate {
                 break;
             case 3:
                 ioService.write("Введите сумму пополнения");
-                cardService.addCash(readInt());
+                cardService.addCash(ioService.readInt());
                 ifExit();
                 authorizationService.logOut();
                 break;
             case 4:
                 changePin();
+                ifExit();
+                authorizationService.logOut();
+                break;
+            case 5:
+                CardToCardTranzaction();
                 ifExit();
                 authorizationService.logOut();
                 break;
@@ -65,9 +73,9 @@ public class Bankomate {
 
     private void changePin() {
         ioService.write("Введите текущий ПИН-код");
-        Integer oldPin = readInt();
+        Integer oldPin = ioService.readInt();
         ioService.write("Введите новый ПИН-код");
-        Integer newPin = readInt();
+        Integer newPin = ioService.readInt();
         try {
             cardService.pinChange(oldPin, newPin);
         } catch (WrongPinException e) {
@@ -75,25 +83,29 @@ public class Bankomate {
             changePin();
         }
     }
+    private void CardToCardTranzaction() {
+        try {
+            ioService.write("Введите номер карты");
+            long cardNumber = ioService.readLong();
+            ioService.write("Введите cумму перевода");
+            cardService.addFromCardToCard(card.getBank().getCard(cardNumber),ioService.readInt());
+        } catch (NoEnoughMoneyException e) {
+            ioService.write(e.getMessage());
+
+        }
+    }
 
     private void cashIssue() {
         try {
             ioService.write("Введите сумму");
-            cardService.cashIssue(readInt());
+            cardService.cashIssue(ioService.readInt());
         } catch (NoEnoughMoneyException e) {
             ioService.write(e.getMessage());
             cashIssue();
         }
     }
 
-    private int readInt() {
-        try {
-            return Integer.parseInt(ioService.read());
-        } catch (IOException e) {
-            ioService.writeUnknownError();
-            return readInt();
-        }
-    }
+
 
     private void ifExit() {
         ioService.write("Желаете ли продолжить? y/n");

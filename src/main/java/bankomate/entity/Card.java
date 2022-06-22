@@ -5,11 +5,17 @@ public class Card {
     private String currency;
     private int cashAmount;
 
-    public Card(long cardNumber, int pin, String currency,int cashAmount) {
+    private Bank bank;
+    public Card(long cardNumber, int pin, String currency,int cashAmount,Bank bank) {
         this.cardNumber = cardNumber;
         this.pin = pin;
         this.currency = currency;
         this.cashAmount = cashAmount;
+        this.bank=bank;
+    }
+
+    public Bank getBank() {
+        return bank;
     }
 
     public long getCardNumber() {

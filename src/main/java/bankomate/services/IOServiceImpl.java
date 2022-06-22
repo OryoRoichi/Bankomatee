@@ -23,4 +23,20 @@ public class IOServiceImpl implements IOService {
     public void writeUnknownError() {
         write("Неизвестная ошибка. Попробуйте еще раз");
     }
+    public int readInt() {
+        try {
+            return Integer.parseInt(read());
+        } catch (IOException e) {
+            writeUnknownError();
+            return readInt();
+        }
+    }
+    public Long readLong() {
+        try {
+            return Long.parseLong(read());
+        } catch (IOException e) {
+            writeUnknownError();
+            return readLong();
+        }
+    }
 }
